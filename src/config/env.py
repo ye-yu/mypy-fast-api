@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 import logging
+import os
 from typing import Any, MutableMapping
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -18,16 +19,16 @@ class Env(BaseModel):
     app_name: str = Field(default="")
     app_secret: str
     db_url: str
-    count: int
 
     model_config = ConfigDict(hide_input_in_errors=True)
 
     def __init__(self):
         env: MutableMapping[str, Any] = {}
         use_env = ''
+        ini_path = os.path.join(os.getcwd(), './env.ini')
         try:
             parser = ConfigParser()
-            parser.read('./env.ini')
+            parser.read(ini_path)
             default_section = parser['DEFAULT']
             use_env = default_section.get('use_env', 'development')
             logging.info(f"Using environment, {use_env}")
@@ -61,4 +62,4 @@ class Env(BaseModel):
         except ValidationError as ve:
             envs = set(f"{i['loc'][0]} ({error_type_to_readable(i['type'])})"
                        for i in ve.errors())
-            raise RequiredEnvNotDefinedError(envs, use_env)
+            raise RequiredEnvNotDefinedError(envs, use_env, ini_path)
