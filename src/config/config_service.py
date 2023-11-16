@@ -19,10 +19,10 @@ class ConfigService:
         yield get_config_service()
 
 
-__config_service: 'ConfigService'
+__config_service: ConfigService
 
 
-def get_config_service() -> 'ConfigService':
+def get_config_service() -> ConfigService:
     return __config_service
 
 
