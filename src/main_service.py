@@ -22,5 +22,5 @@ class MainService:
     @staticmethod
     def instantiate(config_service: ConfigService = Depends(ConfigService.instantiate)):
         i = MainService()
-        i.app_name = config_service.get_string('APP_NAME')
+        i.app_name = config_service.env.APP_NAME
         return i
