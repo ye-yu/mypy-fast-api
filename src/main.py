@@ -1,23 +1,14 @@
 from typing import Union
 
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import Depends, FastAPI
+from .main_service import GetResponse, MainService
 
 app = FastAPI()
 
 
-class GetResponse(BaseModel):
-    Hello: str
-
-    @classmethod
-    def res(cls) -> 'GetResponse':
-        r = cls(Hello="World")
-        return r
-
-
 @app.get("/")
-def read_root() -> GetResponse:
-    return GetResponse.res()
+def read_root(service: MainService = Depends(MainService.instantiate)) -> GetResponse:
+    return service.GetResponse()
 
 
 @app.get("/items/{item_id}")
