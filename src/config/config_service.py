@@ -1,9 +1,8 @@
 import os
 
 from pydantic import ValidationError
-
-from .env import Env
-from .errors import RequiredEnvNotDefinedError
+from src.config.env import Env
+from src.config.errors import RequiredEnvNotDefinedError
 
 
 class ConfigService:
@@ -17,8 +16,18 @@ class ConfigService:
 
     @classmethod
     def instantiate(cls):
-        try:
-            yield cls()
-        except ValidationError as ve:
-            envs = set(str(i['loc'][0]) for i in ve.errors())
-            raise RequiredEnvNotDefinedError(envs, ve)
+        yield get_config_service()
+
+
+__config_service: 'ConfigService'
+
+
+def get_config_service() -> 'ConfigService':
+    return __config_service
+
+
+try:
+    __config_service = ConfigService()
+except ValidationError as ve:
+    envs = set(str(i['loc'][0]) for i in ve.errors() if i['type'] == 'missing')
+    raise RequiredEnvNotDefinedError(envs)
