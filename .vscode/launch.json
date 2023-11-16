@@ -10,11 +10,12 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "main:app",
+                "src.main:app",
                 "--reload"
             ],
             "jinja": true,
-            "justMyCode": true
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
